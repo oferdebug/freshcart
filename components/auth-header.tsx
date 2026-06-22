@@ -1,16 +1,12 @@
 "use client";
 
-import {
-  Show,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { Authenticated, Unauthenticated } from "convex/react";
 
 export function AuthHeader() {
   return (
     <header className="flex items-center justify-end gap-3 px-6 py-4">
-      <Show when="signed-out">
+      <Unauthenticated>
         <SignInButton mode="modal">
           <button
             type="button"
@@ -27,10 +23,10 @@ export function AuthHeader() {
             Sign up
           </button>
         </SignUpButton>
-      </Show>
-      <Show when="signed-in">
+      </Unauthenticated>
+      <Authenticated>
         <UserButton />
-      </Show>
+      </Authenticated>
     </header>
   );
 }

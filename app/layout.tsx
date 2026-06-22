@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthHeader } from "@/components/auth-header";
+import ConvexClientProvider from "@/components/convex-clerk-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,8 +32,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ClerkProvider>
-          <AuthHeader />
-          {children}
+          <ConvexClientProvider>
+            <AuthHeader />
+            {children}
+          </ConvexClientProvider>
         </ClerkProvider>
       </body>
     </html>
