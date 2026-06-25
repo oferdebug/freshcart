@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "backend":"convex dev",
+    "backend": "convex dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
@@ -13,9 +13,11 @@
   "dependencies": {
     "@clerk/nextjs": "^7.5.7",
     "convex": "^1.41.0",
+    "convex-helpers": "^0.1.119",
     "next": "16.2.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "stripe": "^22.2.2"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

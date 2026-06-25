@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthHeader } from "@/components/auth-header";
 import ConvexClientProvider from "@/components/convex-clerk-provider";
+import { SyncUser } from "@/components/sync-user";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ClerkProvider>
           <ConvexClientProvider>
+            <SyncUser />
             <AuthHeader />
             {children}
           </ConvexClientProvider>
