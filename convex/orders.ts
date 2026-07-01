@@ -130,3 +130,26 @@ export const updateStatus = mutation({
     });
   },
 });
+
+// Get order by order number
+export const getByOrderNumber = query({
+  args: {
+    orderNumber: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const order = await ctx.db
+      .query('orders')
+      .withIndex('by_order_number', (q) =>
+        q.eq('orderNumber', args.orderNumber),
+      )
+      .first();
+    if (!order) return null;
+
+    const items = await ctx.db
+      .query('orderItems')
+      .withIndex('by_order', (q) => q.eq('orderId', order._id))
+      .collect();
+
+    return { ...order, items };
+  },
+});

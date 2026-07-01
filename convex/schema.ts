@@ -58,7 +58,8 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index('by_user', ['userId'])
-    .index('by_status', ['status']),
+    .index('by_status', ['status'])
+    .index('by_order_number', ['orderNumber']),
 
   orderItems: defineTable({
     orderId: v.id('orders'),
