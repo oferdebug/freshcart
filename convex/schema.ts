@@ -3,12 +3,16 @@ import { v } from 'convex/values';
 
 export default defineSchema({
   users: defineTable({
-    clerkId: v.string(),
+    clerkId: v.optional(v.string()),
+    tokenIdentifier: v.optional(v.string()),
     email: v.string(),
     name: v.optional(v.string()),
     role: v.optional(v.string()),
     membershipTier: v.optional(v.string()),
-  }).index('by_clerk', ['clerkId']),
+    isMember: v.optional(v.boolean()),
+  })
+    .index('by_clerk', ['clerkId'])
+    .index('by_token', ['tokenIdentifier']),
 
   categories: defineTable({
     name: v.string(),

@@ -1,5 +1,4 @@
 import { mutation, query } from './_generated/server';
-import { v } from 'convex/values';
 
 // Get current logged-in user from Convex
 export const current = query({
@@ -10,7 +9,9 @@ export const current = query({
 
     return await ctx.db
       .query('users')
-      .withIndex('by_clerk', (q) => q.eq('clerkId', identity.subject))
+      .withIndex('by_token', (q) =>
+        q.eq('tokenIdentifier', identity.tokenIdentifier),
+      )
       .first();
   },
 });
@@ -24,19 +25,24 @@ export const upsert = mutation({
 
     const existing = await ctx.db
       .query('users')
-      .withIndex('by_clerk', (q) => q.eq('clerkId', identity.subject))
+      .withIndex('by_token', (q) =>
+        q.eq('tokenIdentifier', identity.tokenIdentifier),
+      )
       .first();
 
     if (existing) {
       await ctx.db.patch(existing._id, {
         name: identity.name ?? undefined,
         email: identity.email ?? '',
+        clerkId: identity.subject,
+        tokenIdentifier: identity.tokenIdentifier,
       });
       return existing._id;
     }
 
     return await ctx.db.insert('users', {
       clerkId: identity.subject,
+      tokenIdentifier: identity.tokenIdentifier,
       email: identity.email ?? '',
       name: identity.name ?? undefined,
       role: 'customer',

@@ -8,12 +8,11 @@ export const list = query({
     categoryId: v.optional(v.id('categories')),
   },
   handler: async (ctx, args) => {
-    const baseQuery = args.categoryId
+    const categoryId = args.categoryId;
+    const baseQuery = categoryId
       ? ctx.db
           .query('products')
-          .withIndex('by_category', (q) =>
-            q.eq('categoryId', args.categoryId ?? ('' as any)),
-          )
+          .withIndex('by_category', (q) => q.eq('categoryId', categoryId))
       : ctx.db.query('products');
     return await baseQuery
       .filter((q) => q.eq(q.field('isActive'), true))
