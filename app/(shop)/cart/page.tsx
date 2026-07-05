@@ -140,7 +140,7 @@ export default function CartPage() {
         <div className='text-xl font-bold'>Total: ${total.toFixed(2)}</div>
       </div>
 
-      <div className='mt-6 flex justify-end'>
+      <div className={'mt-6 flex justify-end'}>
         <Button size='lg' onClick={() => router.push('/checkout')}>
           Proceed to Checkout
         </Button>
