@@ -1,19 +1,19 @@
 'use client';
 
-import { useQuery } from 'convex/react';
-import { Heart, Link, Search, ShoppingCart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { useState } from 'react';
-import { api } from '@/convex/_generated/api';
 import type { Id } from '@/convex/_generated/dataModel';
+import { api } from '@/convex/_generated/api';
+import { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useQuery } from 'convex/react';
+import { Heart, Link, Search, ShoppingCart } from 'lucide-react';
 
 export default function ShopPage() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<
     Id<'categories'> | undefined
   >(undefined);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const categories = useQuery(api.categories.list, { activeOnly: true });
   const products = useQuery(api.products.list, {

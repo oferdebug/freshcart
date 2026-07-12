@@ -18,11 +18,11 @@ export function AuthHeader() {
           <SignInButton mode='redirect'>
             <button
               type='button'
-              className='rounded-full border border-solid border-black/[.08] px-4 py-2 text-sm font-medium transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]'
+              className='rounded-full border border-solid ,bhnjmolk,.;/n ,m,m,nbm,nbnmnbnmbvbnbnmbnmbnl.,k.kl,mnjk,jnmk,..llll.k.mborder-black/[.08] px-4 py-2 text-sm font-medium transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]'
             >
               Sign in
             </button>
-          </SignInButton>
+          </SignInButton> ,mk
           <SignUpButton mode='redirect'>
             <button
               type='button'

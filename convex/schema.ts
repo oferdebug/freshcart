@@ -10,10 +10,16 @@ export default defineSchema({
     role: v.optional(v.string()),
     membershipTier: v.optional(v.string()),
     isMember: v.optional(v.boolean()),
+    paymentIntentId: v.optional(v.string()),
   })
     .index('by_clerk', ['clerkId'])
     .index('by_token', ['tokenIdentifier']),
 
+  webhookEvents: defineTable({
+    eventId: v.string(),
+    source: v.string(),
+    processedAt: v.number(),
+  }).index('by_event_id', ['eventId']),
   categories: defineTable({
     name: v.string(),
     slug: v.string(),

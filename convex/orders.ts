@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
+import { requireUser } from './lib/helpers';
 
 // Get all orders for a user
 export const listByUser = query({
@@ -151,5 +152,90 @@ export const getByOrderNumber = query({
       .collect();
 
     return { ...order, items };
+  },
+});
+
+export const createFromCart = mutation({
+  args: {
+    shippingAddress: v.object({
+      name: v.string(),
+      street: v.string(),
+      city: v.string(),
+      state: v.string(),
+      postalCode: v.string(),
+      country: v.string(),
+      phone: v.string(),
+    }),
+  },
+  returns: v.object({
+    orderId: v.id('orders'),
+    amountCents: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    const user = await requireUser(ctx);
+
+    const cartItems = await ctx.db
+      .query('cartItems')
+      .withIndex('by_user', (q) => q.eq('userId', user._id))
+      .collect();
+
+    if (cartItems.length === 0) {
+      throw new Error('Your Cart Is Empty');
+    }
+
+    const lines = [];
+
+    for (const item of cartItems) {
+      const product = await ctx.db.get(item.productId);
+
+      if (!product || !product.isActive) {
+        throw new Error('Product Is Not Available Anymore');
+      }
+
+      if (product.stock < item.quantity) {
+        throw new Error(`Not Enough Stock For ${product.name}`);
+      }
+
+      lines.push({
+        productId: product._id,
+        productName: product.name,
+        quantity: item.quantity,
+        unitPrice: product.price,
+        totalPrice: product.price * item.quantity,
+      });
+    }
+
+    const subtotal = lines.reduce((sum, line) => sum + line.totalPrice, 0);
+    const shipping = user.isMember ? 0 : 5.99;
+    const tax = 0;
+    const total = subtotal + shipping + tax;
+
+    const now = Date.now();
+
+    const orderId = await ctx.db.insert('orders', {
+      userId: user._id,
+      orderNumber: `FC-${now}`,
+      status: 'pending',
+      paymentStatus: 'pending',
+      subtotal,
+      tax,
+      shipping,
+      total,
+      shippingAddress: args.shippingAddress,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    for (const line of lines) {
+      await ctx.db.insert('orderItems', {
+        orderId,
+        ...line,
+      });
+    }
+
+    return {
+      orderId,
+      amountCents: Math.round(total * 100),
+    };
   },
 });
