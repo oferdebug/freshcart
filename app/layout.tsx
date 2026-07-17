@@ -37,7 +37,7 @@ export default function RootLayout({
         <ClerkProvider>
           <ConvexClientProvider>
             <AuthHeader />
-            {children}
+           <ConvexClientProvider>{children}</ConvexClientProvider>
           </ConvexClientProvider>
         </ClerkProvider>
       </body>

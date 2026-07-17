@@ -11,8 +11,10 @@
 import type * as cart from "../cart.js";
 import type * as categories from "../categories.js";
 import type * as favorites from "../favorites.js";
+import type * as lib_helpers from "../lib/helpers.js";
 import type * as orders from "../orders.js";
 import type * as products from "../products.js";
+import type * as seed from "../seed.js";
 import type * as stripe from "../stripe.js";
 import type * as users from "../users.js";
 
@@ -26,8 +28,10 @@ declare const fullApi: ApiFromModules<{
   cart: typeof cart;
   categories: typeof categories;
   favorites: typeof favorites;
+  "lib/helpers": typeof lib_helpers;
   orders: typeof orders;
   products: typeof products;
+  seed: typeof seed;
   stripe: typeof stripe;
   users: typeof users;
 }>;

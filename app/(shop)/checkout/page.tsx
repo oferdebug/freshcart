@@ -1,19 +1,21 @@
 'use client';
 
-import { useQuery, useMutation, useAction } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import { StripePaymentForm } from '@/components/';
+import { loadStripe } from '@stripe/stripe-js';
+import { useAction, useMutation, useQuery } from 'convex/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { StripePaymentForm } from '@/components/checkout/stripe-payment-form';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { api } from '@/convex/_generated/api';
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-);
+const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+if (!stripePublishableKey) {
+  throw new Error('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not configured');
+}
+const stripePromise = loadStripe(stripePublishableKey);
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState<string | null>(null);
 
   const createOrder = useMutation(api.orders.create);
-  const createPaymentIntent = useAction(api.stripe.createPaymentIntentMutation);
+  const createPaymentIntent = useAction(api.stripe.createPaymentIntent);
 
   const [shippingAddress, setShippingAddress] = useState({
     name: '',
@@ -180,11 +182,11 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
 
-          {clientSecret && (
+          {clientSecret && orderId && (
             <div className='mt-6'>
               <h2 className='text-lg font-medium mb-4'>Payment</h2>
               <Elements stripe={stripePromise} options={{ clientSecret }}>
-                <StripePaymentForm orderId={orderId!} />
+                <StripePaymentForm orderId={orderId} />
               </Elements>
             </div>
           )}

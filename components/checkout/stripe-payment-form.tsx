@@ -1,14 +1,14 @@
 'use client';
-import { Button } from '../ui/button';
-import { useState } from 'react';
 import {
   PaymentElement,
-  useStripe,
   useElements,
+  useStripe,
 } from '@stripe/react-stripe-js';
 import { useMutation, useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { api } from '@/convex/_generated/api';
+import { Button } from '../ui/button';
 
 export function StripePaymentForm({ orderId }: { orderId: string }) {
   const stripe = useStripe();
@@ -43,7 +43,6 @@ export function StripePaymentForm({ orderId }: { orderId: string }) {
       {error && <p className='text-sm text-destructive'>{error}</p>}
       <Button type='submit' disabled={!stripe || loading} className={'w-full'}>
         {loading ? 'processing...' : 'Pay Now'}
-
       </Button>
     </form>
   );
