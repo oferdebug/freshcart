@@ -18,9 +18,7 @@ export async function getCurrentUser(ctx: DatabaseCtx) {
 
   return await ctx.db
     .query('users')
-    .withIndex('by_clerk_user_id', (q) =>
-      q.eq('clerkUserId', identity.subject),
-    )
+    .withIndex('by_clerk_user_id', (q) => q.eq('clerkUserId', identity.subject))
     .unique();
 }
 

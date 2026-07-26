@@ -1,5 +1,5 @@
-import { mutation } from './_generated/server';
 import type { Id } from './_generated/dataModel';
+import { mutation } from './_generated/server';
 
 const categories = [
   { name: 'Fruits & Vegetables', slug: 'fruits-vegetables' },
@@ -12,20 +12,55 @@ const categories = [
 
 const products = [
   { name: 'Bananas', price: 7.9, stock: 80, categorySlug: 'fruits-vegetables' },
-  { name: 'Red Apples', price: 12.9, stock: 65, categorySlug: 'fruits-vegetables' },
-  { name: 'Tomatoes', price: 9.9, stock: 70, categorySlug: 'fruits-vegetables' },
-  { name: 'Cucumbers', price: 8.9, stock: 70, categorySlug: 'fruits-vegetables' },
+  {
+    name: 'Red Apples',
+    price: 12.9,
+    stock: 65,
+    categorySlug: 'fruits-vegetables',
+  },
+  {
+    name: 'Tomatoes',
+    price: 9.9,
+    stock: 70,
+    categorySlug: 'fruits-vegetables',
+  },
+  {
+    name: 'Cucumbers',
+    price: 8.9,
+    stock: 70,
+    categorySlug: 'fruits-vegetables',
+  },
   { name: 'Fresh Milk 1L', price: 6.8, stock: 45, categorySlug: 'dairy-eggs' },
-  { name: 'Large Eggs 12 Pack', price: 14.9, stock: 35, categorySlug: 'dairy-eggs' },
+  {
+    name: 'Large Eggs 12 Pack',
+    price: 14.9,
+    stock: 35,
+    categorySlug: 'dairy-eggs',
+  },
   { name: 'Greek Yogurt', price: 5.9, stock: 40, categorySlug: 'dairy-eggs' },
   { name: 'Whole Wheat Bread', price: 11.9, stock: 25, categorySlug: 'bakery' },
   { name: 'Fresh Baguette', price: 7.9, stock: 20, categorySlug: 'bakery' },
-  { name: 'Chicken Breast 1kg', price: 39.9, stock: 24, categorySlug: 'meat-poultry' },
-  { name: 'Ground Beef 500g', price: 34.9, stock: 18, categorySlug: 'meat-poultry' },
+  {
+    name: 'Chicken Breast 1kg',
+    price: 39.9,
+    stock: 24,
+    categorySlug: 'meat-poultry',
+  },
+  {
+    name: 'Ground Beef 500g',
+    price: 34.9,
+    stock: 18,
+    categorySlug: 'meat-poultry',
+  },
   { name: 'Basmati Rice 1kg', price: 16.9, stock: 50, categorySlug: 'pantry' },
   { name: 'Pasta 500g', price: 6.9, stock: 55, categorySlug: 'pantry' },
   { name: 'Olive Oil 750ml', price: 39.9, stock: 30, categorySlug: 'pantry' },
-  { name: 'Mineral Water 6 Pack', price: 15.9, stock: 60, categorySlug: 'drinks' },
+  {
+    name: 'Mineral Water 6 Pack',
+    price: 15.9,
+    stock: 60,
+    categorySlug: 'drinks',
+  },
   { name: 'Orange Juice 1L', price: 12.9, stock: 32, categorySlug: 'drinks' },
 ] as const;
 

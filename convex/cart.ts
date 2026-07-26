@@ -50,7 +50,10 @@ async function assertCartItemAccess(
     if (user._id !== item.userId && user.role !== 'admin') {
       throw new Error('You cannot modify this cart item.');
     }
-  } else if (!item.sessionId || item.sessionId !== normalizeSessionId(sessionId)) {
+  } else if (
+    !item.sessionId ||
+    item.sessionId !== normalizeSessionId(sessionId)
+  ) {
     throw new Error('A matching session is required.');
   }
 
@@ -71,25 +74,32 @@ export const getCart = query({
           .collect()
       : await ctx.db
           .query('cartItems')
-          .withIndex('by_session_id', (q) =>
-            q.eq('sessionId', owner.sessionId),
-          )
+          .withIndex('by_session_id', (q) => q.eq('sessionId', owner.sessionId))
           .collect();
-
     return await Promise.all(
       items.map(async (item) => {
         const product = await ctx.db.get(item.productId);
+        if (!product) {
+          return {
+            ...item,
+            product: null,
+          };
+        }
+        const imageUrl = product.imageStorageId
+          ? await ctx.storage.getUrl(product.imageStorageId)
+          : null;
         return {
           ...item,
-          product: product
-            ? { ...product, price: product.priceCents / 100 }
-            : null,
+          product: {
+            ...product,
+            price: product.priceCents / 100,
+            imageUrl,
+          },
         };
       }),
     );
   },
 });
-
 export const addItem = mutation({
   args: {
     userId: v.optional(v.id('users')),
@@ -101,7 +111,8 @@ export const addItem = mutation({
     validateQuantity(args.quantity);
     const owner = await assertOwnerAccess(ctx, args);
     const product = await ctx.db.get(args.productId);
-    if (!product || !product.isActive) throw new Error('Product not available.');
+    if (!product || !product.isActive)
+      throw new Error('Product not available.');
 
     const existing = owner.userId
       ? await ctx.db
@@ -148,7 +159,11 @@ export const updateQuantity = mutation({
     sessionId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const item = await assertCartItemAccess(ctx, args.cartItemId, args.sessionId);
+    const item = await assertCartItemAccess(
+      ctx,
+      args.cartItemId,
+      args.sessionId,
+    );
     if (args.quantity <= 0) {
       await ctx.db.delete(item._id);
       return;
@@ -156,7 +171,8 @@ export const updateQuantity = mutation({
 
     validateQuantity(args.quantity);
     const product = await ctx.db.get(item.productId);
-    if (!product || !product.isActive) throw new Error('Product not available.');
+    if (!product || !product.isActive)
+      throw new Error('Product not available.');
     if (product.stock < args.quantity) throw new Error('Insufficient stock.');
 
     await ctx.db.patch(item._id, {
@@ -172,7 +188,11 @@ export const removeItem = mutation({
     sessionId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const item = await assertCartItemAccess(ctx, args.cartItemId, args.sessionId);
+    const item = await assertCartItemAccess(
+      ctx,
+      args.cartItemId,
+      args.sessionId,
+    );
     await ctx.db.delete(item._id);
   },
 });
@@ -191,9 +211,7 @@ export const clear = mutation({
           .collect()
       : await ctx.db
           .query('cartItems')
-          .withIndex('by_session_id', (q) =>
-            q.eq('sessionId', owner.sessionId),
-          )
+          .withIndex('by_session_id', (q) => q.eq('sessionId', owner.sessionId))
           .collect();
 
     await Promise.all(items.map((item) => ctx.db.delete(item._id)));

@@ -1,10 +1,16 @@
-import type { AuthConfig } from "convex/server";
+import type { AuthConfig } from 'convex/server';
+
+const clerkDomain = process.env.CLERK_FRONTEND_API_URL;
+
+if (!clerkDomain) {
+  throw new Error('CLERK_FRONTEND_API_URL is not configured.');
+}
 
 export default {
   providers: [
     {
-      domain: process.env.CLERK_FRONTEND_API_URL!,
-      applicationID: "convex",
+      domain: clerkDomain,
+      applicationID: 'convex',
     },
   ],
 } satisfies AuthConfig;

@@ -7,16 +7,12 @@ import {
   mutation,
   query,
 } from './_generated/server';
+import { hasActiveMembership, requireAdmin, requireUser } from './lib/helpers';
 import {
   addressValidator,
   orderStatusValidator,
   paymentStatusValidator,
 } from './schema';
-import {
-  hasActiveMembership,
-  requireAdmin,
-  requireUser,
-} from './lib/helpers';
 
 const SHIPPING_CENTS = 599;
 const RESERVATION_DURATION_MS = 30 * 60 * 1000;
@@ -218,10 +214,11 @@ export const listAll = query({
   args: { status: v.optional(orderStatusValidator) },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
-    const orders = args.status
+    const { status } = args;
+    const orders = status
       ? await ctx.db
           .query('orders')
-          .withIndex('by_status', (q) => q.eq('status', args.status!))
+          .withIndex('by_status', (q) => q.eq('status', status))
           .order('desc')
           .collect()
       : await ctx.db.query('orders').order('desc').collect();

@@ -1,14 +1,14 @@
 'use client';
 
-// biome-ignore assist/source/organizeImports: <explanation>
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
 import { useMutation, useQuery } from 'convex/react';
-import { ArrowLeft, Heart, LinkIcon, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Heart, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useRef } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -17,12 +17,13 @@ export default function ProductPage() {
   });
 
   const user = useQuery(api.users.current);
-  const isFavorited = useQuery(
+  const isFavorite = useQuery(
     api.favorites.isFavorited,
     user && product ? { userId: user._id, productId: product._id } : 'skip',
   );
   const addToCart = useMutation(api.cart.addItem);
   const toggleFavorite = useMutation(api.favorites.toggle);
+  const imgRef = useRef<HTMLImageElement | null>(null);
 
   if (product === undefined) {
     return <div className={'flex-1 p-6'}>Loading...</div>;
@@ -52,11 +53,22 @@ export default function ProductPage() {
       <div className={'grid md:grid-cols-2 gap-8'}>
         {/* Place holder */}
         <div
-          className={
-            'bg-muted rounded-lg aspect-square flex items-center justify-center'
-          }
+          className={'aspect-square overflow-hidden rounded-lg border bg-muted'}
         >
-          <span className={'text-muted-foreground'}>Product Image</span>
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className={'h-full w-full object-cover'}
+              ref={imgRef}
+            />
+          ) : (
+            <div className={'flex h-full items-center justify-center'}>
+              <span className={'text-muted-foreground'}>
+                No Image Available
+              </span>
+            </div>
+          )}
         </div>
         {/* Product Info */}
         <div className={'space-y-4'}>
@@ -78,9 +90,9 @@ export default function ProductPage() {
               Add to Cart
             </Button>
             <Button variant={'outline'} onClick={handleToggleFavorite}>
-              {isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}
+              {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
               <Heart
-                className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`}
+                className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`}
               />
             </Button>
           </div>

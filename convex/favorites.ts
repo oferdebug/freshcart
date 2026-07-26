@@ -16,6 +16,7 @@ export const list = query({
   args: { userId: v.id('users') },
   handler: async (ctx, args) => {
     await assertUserAccess(ctx, args.userId);
+
     const favorites = await ctx.db
       .query('favorites')
       .withIndex('by_user_id', (q) => q.eq('userId', args.userId))
@@ -24,17 +25,30 @@ export const list = query({
     return await Promise.all(
       favorites.map(async (favorite) => {
         const product = await ctx.db.get(favorite.productId);
+
+        if (!product) {
+          return {
+            ...favorite,
+            product: null,
+          };
+        }
+
+        const imageUrl = product.imageStorageId
+          ? await ctx.storage.getUrl(product.imageStorageId)
+          : null;
+
         return {
           ...favorite,
-          product: product
-            ? { ...product, price: product.priceCents / 100 }
-            : null,
+          product: {
+            ...product,
+            price: product.priceCents / 100,
+            imageUrl,
+          },
         };
       }),
     );
   },
 });
-
 export const isFavorited = query({
   args: { userId: v.id('users'), productId: v.id('products') },
   handler: async (ctx, args) => {
@@ -54,7 +68,8 @@ export const toggle = mutation({
   handler: async (ctx, args) => {
     await assertUserAccess(ctx, args.userId);
     const product = await ctx.db.get(args.productId);
-    if (!product || !product.isActive) throw new Error('Product not available.');
+    if (!product || !product.isActive)
+      throw new Error('Product not available.');
 
     const existing = await ctx.db
       .query('favorites')

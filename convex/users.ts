@@ -1,8 +1,5 @@
 import { mutation, query } from './_generated/server';
-import {
-  getCurrentUser,
-  isConfiguredAdmin,
-} from './lib/helpers';
+import { getCurrentUser, isConfiguredAdmin } from './lib/helpers';
 
 export const current = query({
   args: {},

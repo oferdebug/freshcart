@@ -2,8 +2,8 @@
 
 import { v } from 'convex/values';
 import Stripe from 'stripe';
-import type { Id } from './_generated/dataModel';
 import { internal } from './_generated/api';
+import type { Id } from './_generated/dataModel';
 import type { ActionCtx } from './_generated/server';
 import { action } from './_generated/server';
 
@@ -16,10 +16,9 @@ async function createOrReusePaymentIntent(
     throw new Error('STRIPE_SECRET_KEY is not configured.');
   }
 
-  const order = await ctx.runQuery(
-    internal.orders.getPendingOrderForPayment,
-    { orderId },
-  );
+  const order = await ctx.runQuery(internal.orders.getPendingOrderForPayment, {
+    orderId,
+  });
   const stripe = new Stripe(stripeSecretKey);
 
   if (order.paymentIntentId) {

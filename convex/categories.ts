@@ -17,9 +17,7 @@ export const list = query({
     if (args.activeOnly) {
       return await ctx.db
         .query('categories')
-        .withIndex('by_is_active_and_sort_order', (q) =>
-          q.eq('isActive', true),
-        )
+        .withIndex('by_is_active_and_sort_order', (q) => q.eq('isActive', true))
         .order('asc')
         .collect();
     }
@@ -102,7 +100,8 @@ export const update = mutation({
         .query('categories')
         .withIndex('by_slug', (q) => q.eq('slug', slug))
         .unique();
-      if (duplicate) throw new Error('A category with this slug already exists.');
+      if (duplicate)
+        throw new Error('A category with this slug already exists.');
     }
 
     type CategoryPatch = Partial<
